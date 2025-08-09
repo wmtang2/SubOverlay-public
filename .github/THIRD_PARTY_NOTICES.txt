@@ -1,0 +1,80 @@
+Third-Party Notices for SubOverlay
+=================================
+
+This file lists third-party components included in SubOverlay (runtime and build) along with their primary licenses. License texts are either included below (if required) or referenced via their SPDX identifier. You must retain this file when redistributing the binary.
+
+RUNTIME DEPENDENCIES
+--------------------
+Name: faster-whisper
+License: Apache-2.0
+URL: https://github.com/SYSTRAN/faster-whisper
+
+Name: ctranslate2
+License: Apache-2.0
+URL: https://github.com/OpenNMT/CTranslate2
+
+Name: tokenizers
+License: Apache-2.0
+URL: https://github.com/huggingface/tokenizers
+
+Name: sounddevice
+License: MIT
+URL: https://python-sounddevice.readthedocs.io/
+
+Name: webrtcvad
+License: BSD-3-Clause
+URL: https://github.com/wiseman/py-webrtcvad
+
+Name: pystray
+License: MIT
+URL: https://github.com/moses-palmer/pystray
+
+Name: Pillow
+License: HPND / Historical Permission Notice and Disclaimer (PIL fork) – SPDX: HPND
+URL: https://python-pillow.org
+
+Name: pywin32
+License: PSF License (Python Software Foundation) / MIT-style
+URL: https://github.com/mhammond/pywin32
+
+Name: PyYAML
+License: MIT
+URL: https://pyyaml.org/
+
+Name: python-dotenv
+License: BSD-3-Clause
+URL: https://github.com/theskumar/python-dotenv
+
+BUILD / TOOLING (Not necessarily shipped in final single-file exe)
+-----------------------------------------------------------------
+Name: PyInstaller
+License: GPL-2.0-with-PyInstaller-exception
+URL: https://www.pyinstaller.org/
+
+PyInstaller Licensing Note:
+PyInstaller is released under the GPL v2 license with a special exception that permits linking (including bundling) your non-GPL code without subjecting your own code to the GPL. You are required to reproduce PyInstaller's license notice when distributing binaries created with it. This file serves that purpose.
+
+Included License Text: PyInstaller (GPL v2 + exception)
+------------------------------------------------------
+The following is the license text for PyInstaller including its exception (abridged header):
+
+PyInstaller License
+-------------------
+Copyright (c) 2005-2024, PyInstaller Development Team
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+... (Full text available at https://github.com/pyinstaller/pyinstaller/blob/develop/COPYING.txt)
+
+NOTE: The complete PyInstaller license (GPL v2 with exception) is NOT fully duplicated here for brevity. Distributors should bundle the complete COPYING.txt if stricter compliance is desired.
+
+OTHER NOTES
+-----------
+1. Some dependencies may in turn bundle transitive components under permissive licenses (zlib, BSD, MIT). These are covered by their respective upstream packages.
+2. Model weights you download (e.g., Whisper or faster-whisper models) may have separate licenses; consult the model provider (SYSTRAN / OpenAI). This application does not embed the large model files by default.
+3. No GPL-only runtime libraries (without exceptions) are linked into the distributed executable.
+
+DISCLAIMER
+----------
+This list is provided in good faith but may not be exhaustive. Run an automated license audit (e.g. pip-licenses) for a fully enumerated dependency snapshot corresponding to an exact build.
