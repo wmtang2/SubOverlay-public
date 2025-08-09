@@ -183,9 +183,10 @@ Replace the old `SubOverlay.exe` with the new one. Your `config/settings.yaml` a
 Delete the application folder. Optional: remove downloaded models (look for the model directory you selected in settings) and `config/settings.yaml`.
 
 ## License
-Released under the MIT License. See `LICENSE` for details.
+See `LICENSE.txt` for details.
 
 ## Acknowledgements
 Built with faster‑whisper (ctranslate2 backend) for efficient local transcription.
 
 Enjoy faster, clearer captions with SubOverlay.
+
