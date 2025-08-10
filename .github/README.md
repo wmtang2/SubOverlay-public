@@ -15,7 +15,7 @@ Real‑time speech-to-text subtitles for Windows. SubOverlay listens to your cho
 ## Quick Start (Packaged EXE)
 1. Double‑click `SubOverlay.exe` (or use the provided `run_SubOverlay.bat`).  
 2. Wait for the tray icon to appear (may take a few seconds first run).  
-3. Right‑click tray icon → `Audio Devices` to pick your microphone.  
+3. Right‑click tray icon → `Audio Devices` to pick "Stereo Mixer" (enable it in Sound Settings if it is disabled).  
 4. Right‑click tray icon → `Start Transcription`.  
 5. Speak. Subtitles appear in the overlay window.  
 6. Drag the overlay or adjust its position via `Settings → Overlay`.  
@@ -83,7 +83,7 @@ You only need this if you want faster processing:
 If unsure, you can ignore this entirely—the app works on CPU.
 
 ## Capturing Video / System Audio via a Virtual Audio Cable
-If you want SubOverlay to transcribe audio from a video (browser, media player, conference call) instead of your microphone, route that sound through a virtual audio cable and select the cable as the input device.
+Instead of Windows Sound Mixer, you can also route sound through a virtual audio cable and select the cable as the input device.
 
 ### Overview
 1. Install a virtual cable (e.g. VB‑Audio Virtual Cable).
@@ -189,4 +189,5 @@ See `LICENSE.txt` for details.
 Built with faster‑whisper (ctranslate2 backend) for efficient local transcription.
 
 Enjoy faster, clearer captions with SubOverlay.
+
 
