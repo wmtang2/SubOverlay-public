@@ -15,7 +15,7 @@ Real‑time speech-to-text subtitles for Windows. SubOverlay listens to your cho
 ## Quick Start (Packaged EXE)
 1. Double‑click `SubOverlay.exe` (or use the provided `run_SubOverlay.bat`).  
 2. Wait for the tray icon to appear (may take a few seconds first run).  
-3. Right‑click tray icon → `Audio Devices` to pick "Stereo Mixer" (enable it in Sound Settings if it is disabled).  
+3. Right‑click tray icon → `Audio Devices` to pick your microphone.  
 4. Right‑click tray icon → `Start Transcription`.  
 5. Speak. Subtitles appear in the overlay window.  
 6. Drag the overlay or adjust its position via `Settings → Overlay`.  
@@ -68,6 +68,14 @@ Adjust only if you see either: (a) too many false starts, lower threshold; (b) m
 | Inaccurate transcription | Specify source language or switch to a larger model |
 | App won’t exit | Use tray → Exit (updated to fully terminate) |
 
+### Accuracy vs Latency (Streaming vs Chunk Mode)
+If you are unhappy with transcription accuracy in the default streaming mode, try switching to chunk mode:
+1. Tray icon → Settings → Transcription tab.
+2. Change Mode from `stream` to `chunk`.
+3. (Optionally) pick a larger model (e.g. `small` or `medium`) if CPU/GPU resources allow.
+
+Chunk mode processes slightly larger buffered segments, giving the model more surrounding context per inference; this usually improves punctuation and reduces short hallucinated fragments at the cost of a bit more latency. Streaming mode prioritizes immediacy and may emit shorter, occasionally less stable phrases. Pick the mode that best fits your scenario (presentations: streaming; post‑meeting notes / higher fidelity: chunk).
+
 If settings become unstable, delete `config/settings.yaml` (a fresh one regenerates next run).
 
 ## Privacy
@@ -82,97 +90,73 @@ You only need this if you want faster processing:
 
 If unsure, you can ignore this entirely—the app works on CPU.
 
-## Capturing Video / System Audio via a Virtual Audio Cable
-Instead of Windows Sound Mixer, you can also route sound through a virtual audio cable and select the cable as the input device.
+## Capturing System / Application Audio (Stereo Mix – Built‑in Loopback)
+If you want SubOverlay to transcribe what you (or a video / call) hear through your speakers instead of (or in addition to) your microphone, you can often use Windows' built‑in "Stereo Mix" (sometimes called "What U Hear"). This exposes your current output stream as a recording device.
 
-### Overview
-1. Install a virtual cable (e.g. VB‑Audio Virtual Cable).
-2. Set the video player's (or system) output to the virtual cable.
-3. (Optional) Play the cable back to your real speakers/headphones using a replicator so you can still hear it.
-4. In SubOverlay select the virtual cable as the input device.
-5. Start transcription.
+### 1. Enable Stereo Mix (Windows 10/11)
+On many systems (especially with Realtek audio) Stereo Mix is present but disabled by default.
+1. Right‑click the speaker icon in the taskbar → choose "Sound settings".
+2. Scroll (Win11) and click "More sound settings" (opens classic Sound dialog) OR (Win10) click "Sound Control Panel" on the right.
+3. Go to the Recording tab.
+4. Right‑click in the empty area → check "Show Disabled Devices" and "Show Disconnected Devices".
+5. If you see "Stereo Mix" (or "What U Hear" / "Loopback" depending on manufacturer), right‑click → Enable.
+6. (Optional) Right‑click → "Set as Default Device" ONLY if you want all apps to treat it as default input; not required for SubOverlay (you can just select it inside the app).
 
-### Step 1: Install Virtual Cable
-Download (free) VB‑Audio Virtual Cable: https://vb-audio.com/Cable/  
-Run the installer as Administrator, finish, then reboot if prompted.
+If Stereo Mix does not appear:
+* Ensure you have the latest Realtek (or vendor) audio driver (OEM support site often more complete than Windows Update).
+* Laptops sometimes hide the option if the internal codec doesn’t expose it; in that case see Alternatives below.
 
-After install you get (names may vary):
-* Playback device: `CABLE Input (VB-Audio Virtual Cable)`
-* Recording device: `CABLE Output (VB-Audio Virtual Cable)`
+### 2. Select Stereo Mix in SubOverlay
+1. Right‑click the SubOverlay tray icon → Audio Devices.
+2. Pick the input device containing "Stereo Mix" (exact name varies).
+3. Click "Select Device".
+4. Right‑click tray icon → Start Transcription. Subtitles now reflect any audio playing through your speakers/headphones.
 
-### Step 2: Route Video / App Audio Into the Cable
-Option A (Per‑Application): In the app (e.g. VLC / Zoom / media player) choose audio output = `CABLE Input`.
+### 3. Include Your Microphone Too (Simple Options)
+Stereo Mix usually captures only system/output audio. If you also want your live mic words transcribed at the same time, you have to mix them before they reach SubOverlay (it can listen to only one device at once):
+Option A (Windows Listen):
+1. Sound Control Panel → Recording tab → select your Microphone → Properties.
+2. Listen tab → check "Listen to this device" → choose the same playback device you normally use → Apply.
+3. Now your mic is played out the speakers and becomes part of the Stereo Mix signal.
+4. Select Stereo Mix as input in SubOverlay (as above). Both mic + system audio are transcribed (note: may include remote participants if on a call). 
 
-Option B (Whole System): Windows Settings → System → Sound → Choose where to play sound → set default output to `CABLE Input` (remember to change back later).
+Option B (External Mix): Use a hardware mixer or third‑party software (VoiceMeeter, etc.) to create a combined output, then select that combined loopback (or still Stereo Mix if it now represents the sum) in SubOverlay.
 
-Now whatever plays to `CABLE Input` appears as a recording stream on `CABLE Output` (SubOverlay can listen to that).
+### 4. Reduce Echo / Feedback
+If you hear your own voice doubled after enabling "Listen":
+* Lower mic playback level in the Levels tab of the microphone's Properties.
+* Use headphones: Stereo Mix will still capture what would go to speakers, but the mic won’t re‑record the speaker output.
+* Disable any microphone “enhancements” that add processing delay.
 
-### Step 3: (Optional) Hear the Audio While Routing
-You need to monitor the cable so you can still listen:
-1. Open Windows Sound Control Panel → Recording tab.
-2. Select `CABLE Output` → Properties → Listen tab.
-3. Check `Listen to this device`, pick your real speakers/headset, Apply.
-   *This is the simplest no‑code option.*
+### 5. Adjust Levels
+If transcription misses words because output is quiet:
+1. Sound Control Panel → Recording → Stereo Mix → Properties.
+2. Levels tab → raise the slider (avoid clipping; stay below 100 if it distorts).
+3. Optionally reduce other noisy inputs (disable unused mics).
 
-OR use the Python replicator script below if you prefer explicit control / low latency tweak.
+### 6. Temporarily Pause Without Changing Devices
+Instead of deselecting Stereo Mix, just Stop Transcription from the tray. You can resume without losing selection.
 
-### Step 4: Select Cable in SubOverlay
-Tray icon → `Audio Devices` → pick the device whose name includes `CABLE Output` → Select Device.
+### 7. Alternatives if Stereo Mix Is Unavailable
+If your device truly lacks Stereo Mix:
+* WASAPI Loopback (future enhancement): SubOverlay could add native loopback capture; for now use a lightweight virtual device (only if needed).
+* USB Audio Split: A cheap USB sound card can serve as a dedicated playback whose loopback is exposed.
+* Third‑party tools (last resort): VB-Audio Cable or VoiceMeeter Banana.
 
-### Step 5: Start Transcription
-Tray icon → `Start Transcription`. Subtitles now reflect the video/system audio.
-
-### Optional: Python Sound Replicator (Loopback)
-If you want a lightweight passthrough with adjustable latency instead of Windows "Listen" feature, create a file `replicator.py` (outside the frozen EXE, or run in your Python env):
-
-```python
-import sounddevice as sd
-
-SOURCE_NAME_FRAGMENT = "CABLE Output"   # recording side (what SubOverlay also listens to)
-OUTPUT_NAME_FRAGMENT = "Speakers"       # change to a unique part of your real output device name
-BLOCK_SIZE = 1024                        # smaller = lower latency, higher CPU
-
-def pick_device(kind_fragment, kind="input"):
-	for idx, dev in enumerate(sd.query_devices()):
-		if kind == "input" and dev["max_input_channels"] > 0 and kind_fragment.lower() in dev["name"].lower():
-			return idx
-		if kind == "output" and dev["max_output_channels"] > 0 and kind_fragment.lower() in dev["name"].lower():
-			return idx
-	raise RuntimeError(f"Device fragment '{kind_fragment}' not found")
-
-in_dev = pick_device(SOURCE_NAME_FRAGMENT, "input")
-out_dev = pick_device(OUTPUT_NAME_FRAGMENT, "output")
-
-print(f"Using input #{in_dev}, output #{out_dev}")
-
-def audio_cb(indata, frames, time, status):  # noqa: D401, ANN001
-	if status:
-		print("Status:", status)
-	sd.play(indata.copy(), samplerate=STREAM.sample_rate, device=out_dev, blocking=False)
-
-STREAM = sd.InputStream(device=in_dev, callback=audio_cb, blocksize=BLOCK_SIZE)
-with STREAM:
-	print("Replicating... Ctrl+C to stop")
-	while True:
-		sd.sleep(1000)
-```
-
-Run with:
-```powershell
-python replicator.py
-```
-Tune latency by lowering `BLOCK_SIZE` (e.g. 512 or 256) if your system handles it without glitches.
-
-### Tips / Troubleshooting
-| Problem | Fix |
+### Troubleshooting (Stereo Mix)
+| Problem | Try |
 |---------|-----|
-| Echo / Feedback | Ensure your microphone isn’t also capturing speaker output; mute mic if only transcribing video |
-| No audio level in SubOverlay | Verify the app really outputs to `CABLE Input`; try per‑app volume mixer (Win+X → Volume Mixer) |
-| Distorted sound | Increase BLOCK_SIZE or disable other enhancement software |
-| Delay too high | Use smaller BLOCK_SIZE or Windows "Listen to this device" (often has acceptable latency) |
-| Need both mic + video | Use a mixer tool (e.g. VoiceMeeter) and select its combined virtual output in SubOverlay |
+| Stereo Mix not listed | Show Disabled Devices; install/update OEM Realtek/Conexant driver; reboot |
+| Stereo Mix stays silent | Play audio through speakers (not Bluetooth that bypasses codec); check Levels tab |
+| Echo / feedback | Use headphones or disable mic "Listen"; lower mic playback level |
+| Mic missing from transcription | You’re only capturing output; enable mic "Listen" or mix externally |
+| Audio distorted / clipped | Lower application/system volume or reduce Stereo Mix Level |
+| Privacy concern | Remember Stereo Mix captures ALL system playback; stop transcription when not needed |
 
-To revert: set your default playback device back to speakers/headphones and (if used) uncheck "Listen to this device".
+### Reverting
+1. If you set Stereo Mix as default device: Recording tab → right‑click your microphone → Set as Default.
+2. If you enabled mic "Listen": uncheck it to avoid hearing yourself.
+3. (Optional) Disable Stereo Mix again if you prefer a shorter device list.
 
 ---
 
@@ -183,11 +167,9 @@ Replace the old `SubOverlay.exe` with the new one. Your `config/settings.yaml` a
 Delete the application folder. Optional: remove downloaded models (look for the model directory you selected in settings) and `config/settings.yaml`.
 
 ## License
-See `LICENSE.txt` for details.
+Released under the MIT License. See `LICENSE` for details.
 
 ## Acknowledgements
 Built with faster‑whisper (ctranslate2 backend) for efficient local transcription.
 
 Enjoy faster, clearer captions with SubOverlay.
-
-
