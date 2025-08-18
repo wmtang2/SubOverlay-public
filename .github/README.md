@@ -1,4 +1,6 @@
+
 git clone https://github.com/wmtang2/SubOverlay.git
+
 # SubOverlay
 
 Real‑time speech-to-text subtitles for Windows. SubOverlay listens to your chosen audio input and places a clean, customizable subtitle overlay on your screen while you speak.
@@ -53,10 +55,43 @@ If unsure, start with `base` then adjust upward if accuracy is insufficient.
 ## Language & Translation
 * Leave language on `auto` for mixed or unknown speech.  
 * Set a specific language for faster, slightly more accurate recognition.  
-* Switch task to `translate` to always output English.  
+* Switch 'Output Language' to `translate` to always output English.  
+
+## Enabling Multi-Language Translation & Best Settings
+
+To enable multi-language translation 
+
+1. **Open Settings:** Right-click the tray icon and select `Settings`.
+2. **Go to the Advanced tab:**
+	- **Translation Feature:** Tick `Enable translation`. A new `Translation` tab will appear.
+3. If translation is creating very bad results try stopping and starting it again
+
+To achieve the best results:
+
+1. **Open Settings:** Right-click the tray icon and select `Settings`.
+2. **Go to the Transcription tab:**
+	- **Task:** Set to `transcribe` to keep the original language (recommended for best accuracy).
+	- **Mode:** Select `chunk` mode for improved context and punctuation.
+	- **Source Language:** Specify your source language (e.g., `en`, `zh`, `es`) for faster and more accurate recognition.
+	- **Model:** Choose the `large` model for highest accuracy (requires more resources).
+	- **Latency Budget:** Set to `3000ms` for a good balance between speed and accuracy.
+3. **Enable CUDA:**
+	- Go to the CUDA tab and enable GPU acceleration if you have a compatible NVIDIA GPU and CUDA 12.x installed.
+
+**Summary of Best Settings:**
+- Task: `transcribe` (keeps original language)
+- Mode: `chunk`
+- Source Language: user-specified (not `auto`)
+- Model: `large`
+- Latency Budget: `3000ms`
+- Enable CUDA (if available)
+
+These settings provide the most accurate and natural transcription and translation experience. You can adjust the model size and latency budget for your hardware and needs.
 
 ## Voice Activity (Advanced)
 Adjust only if you see either: (a) too many false starts, lower threshold; (b) missed words, also lower threshold slightly; or (c) merging sentences, raise `Min Silence` to separate less, lower to separate more.
+
+
 
 ## Troubleshooting
 | Issue | Try |
@@ -173,4 +208,3 @@ See `LICENSE` for details.
 Built with faster‑whisper (ctranslate2 backend) for efficient local transcription.
 
 Enjoy faster, clearer captions with SubOverlay.
-
